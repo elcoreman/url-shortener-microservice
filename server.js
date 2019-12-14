@@ -34,21 +34,15 @@ app.get("/api/hello", function(req, res) {
   res.json({ greeting: "hello API" });
 });
 
-const options = {
-  family: 6,
-  hints: dns.ADDRCONFIG | dns.V4MAPPED
-};
-
-/*dns.lookup('freecodecamp222.org', (err, address, family) => {
-  console.log(address, family, err);
-});*/
-
 app.post("/api/shorturl/new", function(req, res) {
-  dns.lookup(req.body.url, options, err => {
+  const myURL = new URL(req.body.url);
+  const hostName = myURL.hostname.replace("www.", "");
+  dns.lookup(hostName, err => {
     if (err) {
-      res.json({ error: err });
+      res.json({ error: "invalid URL" });
     } else {
-      res.json({ greeting: req.body.url });
+      //res.json({ greeting: req.body.url });
+      
     }
   });
 });
