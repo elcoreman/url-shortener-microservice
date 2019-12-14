@@ -57,23 +57,28 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      var short_url = 0;
-      /*URLModel.findOne({ original_url: req.body.url }, (err, data) => {
-        res.json({ err, data });
-      });*/
-      URLModel.create({ original_url: req.body.url, short_url }, (err, data) => {
+      var short_url;
+      URLModel.findOne({ original_url: req.body.url }, (err, data) => {
         if (err) return console.error(err);
-        res.json({ id: data });
+        if (data) {
+          res.json({
+            original_url: data.original_url,
+            short_url: data.short_url
+          });
+        } else {
+          
+          URLModel.create(
+            { original_url: req.body.url, short_url },
+            (err, data) => {
+              if (err) return console.error(err);
+              res.json({
+                original_url: data.original_url,
+                short_url: data.short_url
+              });
+            }
+          );
+        }
       });
-
-      //res.json({ aa: "bb" });
-      /*createAndSaveURL(req.body.url, data => {
-        //res.json({ id: "aa" });
-        console.log("AAA");
-      });*/
-      /*findOneByURL(req.body.url, data => {
-        res.json({ aa: data.id });
-      });*/
     }
   });
 });
