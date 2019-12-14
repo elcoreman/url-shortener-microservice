@@ -15,7 +15,7 @@ var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/
 
-mongoose.connect(process.env.MONGOLAB_URI);
+mongoose.connect(process.env.MONGOLAB_URI, {useNewUrlParser: true});
 
 app.use(cors());
 
@@ -34,21 +34,21 @@ app.get("/api/hello", function(req, res) {
   res.json({ greeting: "hello API" });
 });
 
-const URLSchema = new mongoose.Schema({
+var URLSchema = new mongoose.Schema({
   url: String
 });
 
-const URLModel = mongoose.model("URLModel", URLSchema);
+var URLModel = mongoose.model("URLModel", URLSchema);
 
-const createAndSaveURL = (url, done) => {
+var createAndSaveURL = (url, done) => {
   var URLModelInstance = new URLModel({ url: url });
-  URLModelInstance.save((err, data) => {
+  URLModelInstance.save().then((err, data) => {
     if (err) return console.error(err);
     done(data);
   });
 };
 
-const findOneByURL = (url, done) => {
+var findOneByURL = (url, done) => {
   URLModel.findOne({ url: url }, (err, data) => {
     if (err) return console.log(err);
     done(data);
@@ -62,11 +62,16 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      var URLModelInstance = new URLModel({ url: req.body.url });
+      URLModel.create({ url: req.body.url}, function(err, data) {
+        if (err) return console.log(err);
+        console.log(data);
+        // saved!
+      });
+      /*var URLModelInstance = new URLModel({ url: req.body.url });
       URLModelInstance.save((err, data) => {
         if (err) return console.error(err);
         res.json({ id: data.id });
-      });
+      });*/
 
       //res.json({ aa: "bb" });
       /*createAndSaveURL(req.body.url, data => {
