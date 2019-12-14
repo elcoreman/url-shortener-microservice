@@ -38,33 +38,36 @@ const URLSchema = new mongoose.Schema({
   url: String
 });
 
-const URL = mongoose.model("URL", URLSchema);
+const URLModel = mongoose.model("URL", URLSchema);
 
 const createAndSaveURL = (url, done) => {
-  var url = new URL({ url });
-  url.save((err, data) => {
+  var URLModelInstance = new URLModel({ url });
+  URLModelInstance.save((err, data) => {
     if (err) return console.error(err);
     done(data);
   });
 };
 
 const findOneByURL = (url, done) => {
-  URL.findOne({ url }, (err, data) => {
+  URLModel.findOne({ url, url }, (err, data) => {
     if (err) return console.log(err);
     done(data);
   });
 };
 
 app.post("/api/shorturl/new", function(req, res) {
-  const myURL = new URL(req.body.url);
-  const hostName = myURL.hostname.replace("www.", "");
+  var myURL = new URL(req.body.url);
+  var hostName = myURL.hostname.replace("www.", "");
   dns.lookup(hostName, err => {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      //createAndSaveURL(req.body.url, () => {});
+      res.json({ aa: req.body.url });
+      /*createAndSaveURL(req.body.url, data => {
+        res.json({ aa: data.url });
+      });*/
       findOneByURL(req.body.url, data => {
-        res.json({ aa: data });
+        res.json({ aa: data.id });
       });
     }
   });
