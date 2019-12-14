@@ -40,6 +40,16 @@ const URLSchema = new mongoose.Schema({
 
 const URL = mongoose.model("URL", URLSchema);
 
+
+const createAndSaveURL = (url, done)=> {
+  var url = new URL({url});
+  url.save((err, data)=> {
+    if (err) return console.error(err);
+    done(data)
+  });
+};
+
+
 app.post("/api/shorturl/new", function(req, res) {
   const myURL = new URL(req.body.url);
   const hostName = myURL.hostname.replace("www.", "");
