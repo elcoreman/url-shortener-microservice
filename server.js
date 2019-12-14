@@ -38,10 +38,10 @@ const URLSchema = new mongoose.Schema({
   url: String
 });
 
-const URLModel = mongoose.model("URL", URLSchema);
+const URLModel = mongoose.model("URLModel", URLSchema);
 
 const createAndSaveURL = (url, done) => {
-  var URLModelInstance = new URLModel({ url });
+  var URLModelInstance = new URLModel({ url: url });
   URLModelInstance.save((err, data) => {
     if (err) return console.error(err);
     done(data);
@@ -49,7 +49,7 @@ const createAndSaveURL = (url, done) => {
 };
 
 const findOneByURL = (url, done) => {
-  URLModel.findOne({ url, url }, (err, data) => {
+  URLModel.findOne({ url: url }, (err, data) => {
     if (err) return console.log(err);
     done(data);
   });
@@ -62,13 +62,20 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      res.json({ aa: req.body.url });
-      /*createAndSaveURL(req.body.url, data => {
-        res.json({ aa: data.url });
-      });*/
-      findOneByURL(req.body.url, data => {
-        res.json({ aa: data.id });
+      var URLModelInstance = new URLModel({ url: req.body.url });
+      URLModelInstance.save((err, data) => {
+        if (err) return console.error(err);
+        res.json({ id: data.id });
       });
+
+      //res.json({ aa: "bb" });
+      /*createAndSaveURL(req.body.url, data => {
+        //res.json({ id: "aa" });
+        console.log("AAA");
+      });*/
+      /*findOneByURL(req.body.url, data => {
+        res.json({ aa: data.id });
+      });*/
     }
   });
 });
