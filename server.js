@@ -37,18 +37,11 @@ app.get("/api/hello", function(req, res) {
 });
 
 var URLSchema = new mongoose.Schema({
-  url: String
+  original_url: String,
+  short_url: String
 });
 
 var URLModel = mongoose.model("URLModel", URLSchema);
-
-var createAndSaveURL = (url, done) => {
-  var URLModelInstance = new URLModel({ url: url });
-  URLModelInstance.save().then((err, data) => {
-    if (err) return console.error(err);
-    done(data);
-  });
-};
 
 var findOneByURL = (url, done) => {
   URLModel.findOne({ url: url }, (err, data) => {
@@ -64,10 +57,14 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      URLModel.create({ url: req.body.url }, (err, data) => {
-        if (err) return console.error(err);
+      var short_url = 0;
+      URLModel.findOne({ original_url: req.body.url }, (err, data) => {
         res.json({ id: data });
       });
+      /*URLModel.create({ original_url: req.body.url, short_url }, (err, data) => {
+        if (err) return console.error(err);
+        res.json({ id: data });
+      });*/
 
       //res.json({ aa: "bb" });
       /*createAndSaveURL(req.body.url, data => {
