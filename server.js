@@ -36,13 +36,14 @@ app.get("/api/hello", function(req, res) {
 
 const options = {
   family: 6,
-  hints: dns.ADDRCONFIG | dns.V4MAPPED,
+  hints: dns.ADDRCONFIG | dns.V4MAPPED
 };
 
-app.post("/api/shorturl/new",options, function(req, res) {
-  dns.lookup(req.body.url, err => {
-    if (err) res.json({ error: err });
-    else {
+app.post("/api/shorturl/new", function(req, res) {
+  dns.lookup(req.body.url, options, err => {
+    if (err) {
+      res.json({ error: err });
+    } else {
       res.json({ greeting: req.body.url });
     }
   });
