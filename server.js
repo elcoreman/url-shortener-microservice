@@ -17,7 +17,7 @@ var port = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGOLAB_URI, {useNewUrlParser: true}).catch(error => console.log(error));;
 console.log(mongoose.connection.readyState);
-app.use(cors());
+app.use(cors());//
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
@@ -62,16 +62,16 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      URLModel.create({ url: req.body.url}, function(err, data) {
+      /*URLModel.create({ url: req.body.url}, function(err, data) {
         if (err) return console.log(err);
         console.log(data);
         // saved!
-      });
-      /*var URLModelInstance = new URLModel({ url: req.body.url });
-      URLModelInstance.save((err, data) => {
+      });*/
+      var URLModelInstance = new URLModel({ url: req.body.url });
+      URLModelInstance.create((err, data) => {
         if (err) return console.error(err);
         res.json({ id: data.id });
-      });*/
+      });
 
       //res.json({ aa: "bb" });
       /*createAndSaveURL(req.body.url, data => {
