@@ -15,8 +15,8 @@ var port = process.env.PORT || 3000;
 
 /** this project needs a db !! **/
 
-mongoose.connect(process.env.MONGOLAB_URI, {useNewUrlParser: true});
-
+mongoose.connect(process.env.MONGOLAB_URI, {useNewUrlParser: true}).catch(error => console.log(error));;
+console.log(mongoose.connection.readyState);
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
