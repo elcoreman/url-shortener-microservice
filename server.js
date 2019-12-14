@@ -4,6 +4,7 @@ var express = require("express");
 var mongo = require("mongodb");
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
+var dns = require("dns");
 
 var cors = require("cors");
 
@@ -33,8 +34,18 @@ app.get("/api/hello", function(req, res) {
   res.json({ greeting: "hello API" });
 });
 
-app.post("/api/shorturl/new", function(req, res) {
-  res.json({ greeting: dns.lookup(req.body.url, cb) });
+const options = {
+  family: 6,
+  hints: dns.ADDRCONFIG | dns.V4MAPPED,
+};
+
+app.post("/api/shorturl/new",options, function(req, res) {
+  dns.lookup(req.body.url, err => {
+    if (err) res.json({ error: err });
+    else {
+      res.json({ greeting: req.body.url });
+    }
+  });
 });
 
 app.listen(port, function() {
