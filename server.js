@@ -57,7 +57,6 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      var short_url;
       URLModel.findOne({ original_url: req.body.url }, (err, data) => {
         if (err) return console.error(err);
         if (data) {
@@ -66,17 +65,22 @@ app.post("/api/shorturl/new", function(req, res) {
             short_url: data.short_url
           });
         } else {
-          
-          URLModel.create(
-            { original_url: req.body.url, short_url },
-            (err, data) => {
+          URLModel.findOne()
+            .sort({ field: "asc", _id: -1 })
+            .limit(1)
+            .exec((err, data) => {
               if (err) return console.error(err);
-              res.json({
-                original_url: data.original_url,
-                short_url: data.short_url
-              });
-            }
-          );
+              URLModel.create(
+                { original_url: req.body.url, short_url: data.short_url++ },
+                (err, data) => {
+                  if (err) return console.error(err);
+                  res.json({
+                    original_url: data.original_url,
+                    short_url: data.short_url
+                  });
+                }
+              );
+            });
         }
       });
     }
