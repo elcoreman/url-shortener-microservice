@@ -39,7 +39,7 @@ app.get("/api/hello", function(req, res) {
 var URLSchema = new mongoose.Schema({
   original_url: String,
   short_url: String
-});
+}); //
 
 var URLModel = mongoose.model("URLModel", URLSchema);
 
@@ -70,8 +70,10 @@ app.post("/api/shorturl/new", function(req, res) {
             .limit(1)
             .exec((err, data) => {
               if (err) return console.error(err);
+              var short_url = 1;
+              if (data) short_url = data.short_url++;
               URLModel.create(
-                { original_url: req.body.url, short_url: data.short_url++ },
+                { original_url: req.body.url, short_url },
                 (err, data) => {
                   if (err) return console.error(err);
                   res.json({
