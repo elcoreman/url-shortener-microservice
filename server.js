@@ -40,15 +40,20 @@ const URLSchema = new mongoose.Schema({
 
 const URL = mongoose.model("URL", URLSchema);
 
-
-const createAndSaveURL = (url, done)=> {
-  var url = new URL({url});
-  url.save((err, data)=> {
+const createAndSaveURL = (url, done) => {
+  var url = new URL({ url });
+  url.save((err, data) => {
     if (err) return console.error(err);
-    done(data)
+    done(data);
   });
 };
 
+const findOneByURL = (url, done) => {
+  URL.findOne({ url }, (err, data) => {
+    if (err) return console.log(err);
+    done(data);
+  });
+};
 
 app.post("/api/shorturl/new", function(req, res) {
   const myURL = new URL(req.body.url);
@@ -57,10 +62,9 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      const url = new URL({ url: req.body.url });
-      url.save(function(err, data) {
-        if (err) return console.error(err);
-        res.json({ data: data });
+      //createAndSaveURL(req.body.url, () => {});
+      findOneByURL(req.body.url, data => {
+        res.json({ aa: data });
       });
     }
   });
