@@ -34,6 +34,12 @@ app.get("/api/hello", function(req, res) {
   res.json({ greeting: "hello API" });
 });
 
+const URLSchema = new mongoose.Schema({
+  url: String
+});
+
+const URL = mongoose.model("URL", URLSchema);
+
 app.post("/api/shorturl/new", function(req, res) {
   const myURL = new URL(req.body.url);
   const hostName = myURL.hostname.replace("www.", "");
@@ -41,8 +47,11 @@ app.post("/api/shorturl/new", function(req, res) {
     if (err) {
       res.json({ error: "invalid URL" });
     } else {
-      //res.json({ greeting: req.body.url });
-      
+      const url = new URL({ url: req.body.url });
+      url.save(function(err, data) {
+        if (err) return console.error(err);
+        res.json({ data: data });
+      });
     }
   });
 });
