@@ -34,7 +34,7 @@ app.get("/api/hello", function(req, res) {
 });
 
 app.post("/api/shorturl/new", function(req, res) {
-  res.json({ greeting: req.body.url });
+  res.json({ greeting: dns.lookup(req.body.url, cb) });
 });
 
 app.listen(port, function() {
