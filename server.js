@@ -39,6 +39,10 @@ const options = {
   hints: dns.ADDRCONFIG | dns.V4MAPPED
 };
 
+/*dns.lookup('freecodecamp222.org', (err, address, family) => {
+  console.log(address, family, err);
+});*/
+
 app.post("/api/shorturl/new", function(req, res) {
   dns.lookup(req.body.url, options, err => {
     if (err) {
