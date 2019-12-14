@@ -66,13 +66,11 @@ app.post("/api/shorturl/new", (req, res) => {
   });
 });
 
-app.get("/api/shorturl/:short_url", (req,res)=>{
-  URLModel.findOne({short_url: req.short_url}, (err, data)=>{
-    if(data){
-      
-    }else{
-      res.json({"error":"No short url found for given input"});
-    }
+app.get("/api/shorturl/:short_url", (req, res) => {
+  URLModel.findOne({ short_url: req.params.short_url }, (err, data) => {
+    if (err) return console.error(err);
+    if (data) res.redirect(data.original_url);
+    else res.json({ error: "No short url found for given input" });
   });
 });
 
